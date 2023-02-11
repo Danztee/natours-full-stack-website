@@ -16,6 +16,3 @@ router.route("/").get(getAllTours).post(checkBody, createTour);
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
 module.exports = router;
-
-const x = 5;
-x = 2;
