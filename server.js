@@ -1,3 +1,4 @@
+require("colors");
 require("dotenv").config();
 const connectDB = require("./config/connect");
 const app = require("./app");
