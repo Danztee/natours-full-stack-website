@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 const getAllUsers = catchAsync(async (req, res, next) => {
@@ -10,6 +11,19 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     data: {
       users,
     },
+  });
+});
+
+const updateMe = catchAsync(async (req, res, next) => {
+  // create error if user post password data
+  if (req.body.password || req.body.passwordConfirm)
+    return next(new AppError("This route is not for password updates", 400));
+
+  // update user document
+  const user = await User.findById();
+
+  res.status(200).json({
+    message: "success",
   });
 });
 
@@ -41,4 +55,11 @@ const deleteUser = (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, getUser, createUser, updateUser, deleteUser };
+module.exports = {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+  updateMe,
+};
