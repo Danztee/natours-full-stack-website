@@ -12,7 +12,6 @@ const aliasTopTours = (req, res, next) => {
 
 const getAllTours = catchAsync(async (req, res, next) => {
   // try {
-  console.log(req.query);
   // // build the query
   // const queryObj = { ...req.query };
   // const excludedFields = ["page", "sort", "limit", "fields"];
@@ -100,7 +99,7 @@ const createTour = catchAsync(async (req, res, next) => {
 const getTour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   // try {
-  const tour = await Tour.findById(id);
+  const tour = await Tour.findById(id).populate("reviews");
 
   if (!tour) return next(new AppError("No tour found with that ID", 404));
 

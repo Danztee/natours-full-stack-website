@@ -7,7 +7,7 @@ const {
   protect,
   updatePassword,
 } = require("../controllers/authController");
-const router = express.Router();
+
 const {
   getAllUsers,
   createUser,
@@ -17,6 +17,8 @@ const {
   updateMe,
   deleteMe,
 } = require("./../controllers/userController");
+
+const router = express.Router();
 
 router.post("/signup", signUp);
 router.post("/login", login);
