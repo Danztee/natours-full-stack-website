@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
-const { deleteOne, updateOne } = require("./handlerFactory");
+const { deleteOne, updateOne, getOne, getAll } = require("./handlerFactory");
 
 function filterObj(obj, ...allowedFields) {
   const newObj = {};
@@ -11,17 +11,22 @@ function filterObj(obj, ...allowedFields) {
   return newObj;
 }
 
-const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
+const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
-  res.status(200).json({
-    status: "success",
-    result: users.length,
-    data: {
-      users,
-    },
-  });
-});
+// const getAllUsers = catchAsync(async (req, res, next) => {
+//   const users = await User.find();
+
+//   res.status(200).json({
+//     status: "success",
+//     result: users.length,
+//     data: {
+//       users,
+//     },
+//   });
+// });
 
 const updateMe = catchAsync(async (req, res, next) => {
   // create error if user POSTs password data
@@ -61,23 +66,25 @@ const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-const getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined",
-  });
-};
+// const getUser = (req, res) => {
+//   res.status(500).json({
+//     status: "error",
+//     message: "This route is not yet defined",
+//   });
+// };
 
 const createUser = (req, res) => {
   res.status(500).json({
     status: "error",
-    message: "This route is not yet defined",
+    message: "This route is not defined! please use /signup instead.",
   });
 };
 
+const getAllUsers = getAll(User);
+const getUser = getOne(User, undefined, "user");
+
 // DO NOT UPDATE PASSWORDS WITH THIS
 const updateUser = updateOne(User, "user");
-
 const deleteUser = deleteOne(User, "user");
 
 // const updateUser = (req, res) => {
@@ -102,4 +109,5 @@ module.exports = {
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 };
