@@ -13,8 +13,11 @@ const {
 } = require("../controllers/tourController");
 
 const { createReview } = require("./../controllers/reviewController");
+const reviewRouter = require("./../routes/reviewRoutes");
 
 const router = express.Router();
+
+router.use("/:tourId/reviews", reviewRouter);
 
 // router.param("id", checkId);
 router.route("/top-5-tours").get(aliasTopTours, getAllTours);
