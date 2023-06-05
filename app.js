@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
@@ -15,7 +16,12 @@ const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+
 // 1) MIDDLEWARES
+// serving static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // set security HTTP headers
 app.use(helmet());
@@ -33,9 +39,6 @@ app.use("/api", limiter);
 
 // body parser.... reading data from body into req.body
 app.use(express.json({ limit: "10kb" }));
-
-// serving static files
-app.use(express.static(`${__dirname}/public`));
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -64,6 +67,22 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+app.get("/", (req, res) => {
+  res.status(200).render("base");
+});
+
+app.get("/overview", (req, res) => {
+  res.status(200).render("overview", {
+    title: "All tours",
+  });
+});
+
+app.get("/tour", (req, res) => {
+  res.status(200).render("tour", {
+    title: "The forest hiker",
+  });
+});
+
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
