@@ -62,6 +62,32 @@ const login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+// only for rendered pages... nd there will be no errors
+const isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    // Verify token
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    // check if user still exist
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) return next();
+
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    // there is a logged in user
+    res.locals.user = currentUser;
+    return next();
+  }
+
+  next();
+});
+
 const protect = catchAsync(async (req, res, next) => {
   let token;
   if (
@@ -69,6 +95,8 @@ const protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookie.jwt) {
+    token = req.cookie.jwt;
   }
 
   if (!token)
@@ -194,6 +222,7 @@ module.exports = {
   signUp,
   login,
   protect,
+  isLoggedIn,
   restrictTo,
   forgotPassword,
   resetPassword,
